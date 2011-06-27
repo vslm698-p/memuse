@@ -25,17 +25,17 @@
 #define PVR_MEMINFO_FILE "/proc/pvr/meminfo"
 
 struct program {
-	char		*name;
-	uint64_t	kb;
+	char *name;
+	uint64_t kb;
 };
 
 struct library {
-	char            *name;
-	uint64_t        total_kb;
-	int             count;
+	char *name;
+	uint64_t total_kb;
+	int count;
 
-	double          cost;
-	int             pid;
+	double cost;
+	int pid;
 };
 
 #define _(STRING)    gettext(STRING)

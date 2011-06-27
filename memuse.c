@@ -15,7 +15,6 @@
  * This file contains the main routines and program flow
  */
 
-
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -71,36 +70,38 @@ void cleanup(void)
 		fclose(sfile);
 }
 
-
 void usage()
 {
 	printf(_("Usage: memuse [OPTION...]\n"));
-	printf(_("  -o, --output=File            output the memory use list into specified file\n"));
-	printf(_("  -d, --diff=File              diff the prevous memory use case with current\n"));
-	printf(_("  -n, --num=Integer            Show top how many processes by memory use\n"));
+	printf(_
+	       ("  -o, --output=File            output the memory use list into specified file\n"));
+	printf(_
+	       ("  -d, --diff=File              diff the prevous memory use case with current\n"));
+	printf(_
+	       ("  -n, --num=Integer            Show top how many processes by memory use\n"));
 	printf(_("  -h, --help            Show this help message\n"));
 	exit(0);
 }
 
 int main(int argc, char **argv)
 {
-	setlocale (LC_ALL, "");
-	bindtextdomain ("memuse", "/usr/share/locale");
-	textdomain ("memuse");
+	setlocale(LC_ALL, "");
+	bindtextdomain("memuse", "/usr/share/locale");
+	textdomain("memuse");
 
 	if (argc < 0 && argv[0] == NULL)
-		return EXIT_FAILURE; /* shut up compiler warning */
+		return EXIT_FAILURE;	/* shut up compiler warning */
 
 	while (1) {
 		static struct option opts[] = {
-			{ "output", 1, NULL, 'o' },
-			{ "diff", 1, NULL, 'i' },
-			{ "num", 1, NULL, 'n' },
-			{ "time", 1, NULL, 't'},
-			{ "file", 1, NULL, 'f'},
-			{ "daemon", 0, NULL, 'd'},
-			{ "help", 0, NULL, 'h' },
-			{ 0, 0, NULL, 0 }
+			{"output", 1, NULL, 'o'},
+			{"diff", 1, NULL, 'i'},
+			{"num", 1, NULL, 'n'},
+			{"time", 1, NULL, 't'},
+			{"file", 1, NULL, 'f'},
+			{"daemon", 0, NULL, 'd'},
+			{"help", 0, NULL, 'h'},
+			{0, 0, NULL, 0}
 		};
 		int index2 = 0, c;
 
@@ -108,45 +109,47 @@ int main(int argc, char **argv)
 		if (c == -1)
 			break;
 		switch (c) {
-			case 'o':
-				ofile = fopen(optarg,"w+");
-				if ( !ofile){
-					fprintf(stderr,_("Fail to create or open %s!"),optarg);
-					return EXIT_FAILURE;
-				}
-				break;
+		case 'o':
+			ofile = fopen(optarg, "w+");
+			if (!ofile) {
+				fprintf(stderr, _("Fail to create or open %s!"),
+					optarg);
+				return EXIT_FAILURE;
+			}
+			break;
 
-			case 'i':
-				dfile = fopen(optarg,"r");
-				if ( !dfile){
-					fprintf(stderr,_("Fail to create or open %s!"),optarg);
-					return EXIT_FAILURE;
-				}
-				break;
+		case 'i':
+			dfile = fopen(optarg, "r");
+			if (!dfile) {
+				fprintf(stderr, _("Fail to create or open %s!"),
+					optarg);
+				return EXIT_FAILURE;
+			}
+			break;
 
-			case 'n':
-				num = atoi(optarg);
-				break;
+		case 'n':
+			num = atoi(optarg);
+			break;
 
-			case 't':
-				tt = atoi(optarg);
-				break;
+		case 't':
+			tt = atoi(optarg);
+			break;
 
-			case 'f':
-				sfile = fopen(optarg, "w+");
-				break;
+		case 'f':
+			sfile = fopen(optarg, "w+");
+			break;
 
-			case 'd':
-				printf("Use daemon mode\n");
-				daem = 1;
-				break;
+		case 'd':
+			printf("Use daemon mode\n");
+			daem = 1;
+			break;
 
-			case 'h':
-				usage();
-				break;
+		case 'h':
+			usage();
+			break;
 
-			default:
-				;
+		default:
+			;
 		}
 	}
 
@@ -159,7 +162,7 @@ int main(int argc, char **argv)
 		if (pid > 0)
 			exit(0);
 		else {
-			if ((sid=setsid())<0)
+			if ((sid = setsid()) < 0)
 				exit(1);
 			umask(0);
 			while (1) {
@@ -169,7 +172,7 @@ int main(int argc, char **argv)
 				sleep(tt);
 			}
 		}
-	}else{
+	} else {
 		parse_proc();
 		report_results();
 	}

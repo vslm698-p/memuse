@@ -15,7 +15,6 @@
  * This file contains the per-library routines
  */
 
-
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -37,14 +36,14 @@ void add_library(char *name, uint64_t pss, int pid)
 	GList *item;
 	struct library *library;
 
-	if (strlen(name)==0)
+	if (strlen(name) == 0)
 		return;
 
 	item = g_list_first(libraries);
 	while (item) {
 		library = item->data;
 		item = g_list_next(item);
-		if (strcmp(name, library->name)==0) {
+		if (strcmp(name, library->name) == 0) {
 			if (library->pid != pid)
 				library->count++;
 			library->total_kb += pss;
@@ -63,8 +62,7 @@ void add_library(char *name, uint64_t pss, int pid)
 	libraries = g_list_append(libraries, library);
 }
 
-
-static int comparef (gconstpointer a, gconstpointer b)
+static int comparef(gconstpointer a, gconstpointer b)
 {
 	struct library *A = (struct library *)a;
 	struct library *B = (struct library *)b;
@@ -84,7 +82,8 @@ void report_library(void)
 		library = item->data;
 		item = g_list_next(item);
 		c = strchr(library->name, '\n');
-		if (c) *c = 0;
+		if (c)
+			*c = 0;
 
 		library->cost = 1.0 * library->total_kb / library->count;
 	}
@@ -92,18 +91,18 @@ void report_library(void)
 	libraries = g_list_sort(libraries, comparef);
 
 	item = g_list_first(libraries);
-			printf("%40s\t%s\t%s\t%s\n",
-			"Library", "Users", "Avg Memory", "Total Memory");
+	printf("%40s\t%s\t%s\t%s\n",
+	       "Library", "Users", "Avg Memory", "Total Memory");
 	while (item) {
 		library = item->data;
 		item = g_list_next(item);
-		if (i<10 && library->count > 0) {
+		if (i < 10 && library->count > 0) {
 			i++;
 			printf("%40s\t%i\t%lluKb\t\t%lluKb\n",
-			library->name,
-			library->count,
-			library->total_kb / library->count,
-			library->total_kb);
+			       library->name,
+			       library->count,
+			       library->total_kb / library->count,
+			       library->total_kb);
 		}
 	}
 
