@@ -22,6 +22,8 @@
 #include <locale.h>
 #include <libintl.h>
 
+#define PVR_MEMINFO_FILE "/proc/pvr/meminfo"
+
 struct program {
 	char		*name;
 	uint64_t	kb;
@@ -43,7 +45,9 @@ extern GList *programs;
 extern GList *programs_d;
 extern FILE *dfile;
 extern FILE *ofile;
+extern FILE *sfile;
 extern int num;
+extern int daem;
 
 /* prototypes */
 
@@ -52,6 +56,6 @@ extern void report_results(void);
 extern void parse_savedfile(void);
 extern void add_library(char *name, uint64_t mem, int pid);
 extern void report_library(void);
-
+extern uint64_t get_pvr_total(void);
 
 #endif

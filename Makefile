@@ -5,7 +5,7 @@ OBJS := memuse.o proc.o report.o library.o
 all: memuse
 
 
-memuse:	$(OBJS)
+memuse:	$(OBJS) memuse.h
 	gcc $(CFLAGS) $(OBJS) -o memuse
 
 

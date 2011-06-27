@@ -5,7 +5,7 @@
  *
  * Authors: 
  *	Arjan van de Ven <arjan@linux.intel.com>
- *	Jing Wong <jing_j_wang@intel.com>
+ *	Jing Wang <jing_j_wang@intel.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

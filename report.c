@@ -75,9 +75,13 @@ void report_results(void)
 			program_d=find_program(program->name);
 		total += program->kb;
 		if (program_d)
-			printf(_("%8lluKb(%+6lldK)\t%s \n"), program->kb,program->kb-program_d->kb,program->name);
+			sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"), program->kb,program->kb - program_d->kb,program->name);
 		else
-			printf(_("%8lluKb\t\t%s \n"), program->kb, program->name);
+			sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb, program->name);
+
+		if (daem == 0)
+			printf("%s", buf);
+
 		if (ofile){
 			sprintf(buf,_("%8lluKb\t\t%s \n"), program->kb, program->name);
 			fputs(buf,ofile);
@@ -85,8 +89,21 @@ void report_results(void)
 		count++;
 		item = g_list_next(item);
 	}
-	printf(_("%8lluKb\t\tsystem total\n"), total);
 
-	report_library();
+	uint64_t prv_size = get_pvr_total() / 1024;
+
+	if (daem == 0){
+		printf(_("%8lluKb\t\tsystem total\n"), total);
+		report_library();
+	}
+	else {
+		if (sfile) {
+			char buf[256];
+			fseek(sfile, 0, SEEK_SET);
+			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size); 
+			fputs(buf, sfile);
+		}
+	}
+
 }
 

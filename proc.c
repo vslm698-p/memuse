@@ -45,15 +45,8 @@ static void parse_process(int pid)
 	uint64_t pss = 0;
 	uint64_t this_pss = 0;
 	char lib[4096];
-	int ret;
 	
 	memset(program_name, 0, sizeof(program_name));
-/*
-	sprintf(filename, "/proc/%i/exe", pid);
-	ret = readlink(filename, program_name, sizeof(program_name)-1);
-	if (ret < 0)
-		return;
-*/
 	sprintf(cmdfile,"/proc/%i/cmdline",pid);
 	cmd = fopen(cmdfile, "r");	
 	if (!cmd)
@@ -97,7 +90,7 @@ static void parse_process(int pid)
 
 		if (strstr(line, "Pss:")) {
 			c = line;
-			c+=5;
+			c += 5;
 			pss += strtoull(c, NULL, 10);		
 			this_pss += strtoull(c, NULL, 10);
 		}
@@ -112,6 +105,33 @@ static void parse_process(int pid)
 	program->kb = pss;
 	fclose(file);		
 	fclose(cmd);
+}
+
+uint64_t get_pvr_total(void)
+{
+	char *fname = PVR_MEMINFO_FILE;
+	char line[PATH_MAX];
+	FILE *file;
+	uint32_t pvrsize = 0;
+	int i = 0;
+	file = fopen(fname, "r");
+	if (!file)
+		return 0;
+	char *keystr = "The Current Water Mark for memory allocated from system RAM : ";
+	while (!feof(file) && (i < 20)) {
+		char *c;
+		memset(line, 0, sizeof(line));
+		if (!fgets(line, sizeof(line) -1, file))
+			break;
+		if (strstr(line, keystr)) {
+			c = line;
+			c += strlen(keystr);
+			pvrsize = strtoull(c, NULL, 10);
+			break;
+		}
+		i++;
+	}	
+	return pvrsize;
 }
 
 void parse_proc(void)
