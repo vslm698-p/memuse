@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors: 
+ * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wang <jing.j.wang@intel.com>
  *
@@ -16,7 +16,7 @@
  */
 
 
-#define _GNU_SOURCE 
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,14 +45,14 @@ static void parse_process(int pid)
 	uint64_t pss = 0;
 	uint64_t this_pss = 0;
 	char lib[4096];
-	
+
 	memset(program_name, 0, sizeof(program_name));
 	sprintf(cmdfile,"/proc/%i/cmdline",pid);
-	cmd = fopen(cmdfile, "r");	
+	cmd = fopen(cmdfile, "r");
 	if (!cmd)
 		return;
 
-	len=fread(program_name,1,sizeof(program_name),cmd);	
+	len=fread(program_name,1,sizeof(program_name),cmd);
 	if (len <= 0){
 		fclose(cmd);
 		return;
@@ -61,15 +61,15 @@ static void parse_process(int pid)
 	int i=0;
 	while (i++<len){
 		if (program_name[i]==0)
-			program_name[i]=32;	
+			program_name[i]=32;
 	}
 	program_name[len]='\0';
-		
+
 	program = malloc(sizeof(struct program));
 	assert(program != NULL);
 	program->name = strdup(program_name);
-	programs = g_list_append(programs, program);	
-	
+	programs = g_list_append(programs, program);
+
 	sprintf(filename, "/proc/%i/smaps", pid);
 	file = fopen(filename, "r");
 	if (!file){
@@ -91,7 +91,7 @@ static void parse_process(int pid)
 		if (strstr(line, "Pss:")) {
 			c = line;
 			c += 5;
-			pss += strtoull(c, NULL, 10);		
+			pss += strtoull(c, NULL, 10);
 			this_pss += strtoull(c, NULL, 10);
 		}
 
@@ -100,10 +100,10 @@ static void parse_process(int pid)
 			this_pss = 0;
 			lib[0] = 0;
                 }
-		
+
 	}
 	program->kb = pss;
-	fclose(file);		
+	fclose(file);
 	fclose(cmd);
 }
 
@@ -130,7 +130,7 @@ uint64_t get_pvr_total(void)
 			break;
 		}
 		i++;
-	}	
+	}
 	return pvrsize;
 }
 
@@ -153,7 +153,7 @@ void parse_proc(void)
 		if (tmp > 0)
 			parse_process(tmp);
 	} while (1);
-	
+
 	closedir(dir);
 }
 
@@ -163,9 +163,9 @@ void parse_savedfile(void)
 	char line[PATH_MAX];
 	struct program *program;
 	uint64_t pss = 0;
-	
+
 	memset(program_name, 0, sizeof(program_name));
-	
+
 	if (!dfile)
 		return;
 	while (!feof(dfile)) {
@@ -187,6 +187,6 @@ void parse_savedfile(void)
 		assert(program != NULL);
 		program->name = strdup(program_name);
 		program->kb=pss;
-		programs_d = g_list_append(programs_d, program);	
+		programs_d = g_list_append(programs_d, program);
 	}
 }

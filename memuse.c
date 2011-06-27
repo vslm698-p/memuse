@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors: 
+ * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wang <jing.j.wang@intel.com>
  *
@@ -16,7 +16,7 @@
  */
 
 
-#define _GNU_SOURCE 
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,7 +59,7 @@ void free_list(void)
 	programs = NULL;
 	programs_d = NULL;
 }
- 
+
 void cleanup(void)
 {
 	free_list();
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 			{ "output", 1, NULL, 'o' },
 			{ "diff", 1, NULL, 'i' },
 			{ "num", 1, NULL, 'n' },
-			{ "time", 1, NULL, 't'}, 
+			{ "time", 1, NULL, 't'},
 			{ "file", 1, NULL, 'f'},
 			{ "daemon", 0, NULL, 'd'},
 			{ "help", 0, NULL, 'h' },
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 				if ( !ofile){
 					fprintf(stderr,_("Fail to create or open %s!"),optarg);
 					return EXIT_FAILURE;
-				}	
+				}
 				break;
 
 			case 'i':
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 				if ( !dfile){
 					fprintf(stderr,_("Fail to create or open %s!"),optarg);
 					return EXIT_FAILURE;
-				}	
+				}
 				break;
 
 			case 'n':
@@ -134,12 +134,12 @@ int main(int argc, char **argv)
 
 			case 'f':
 				sfile = fopen(optarg, "w+");
- 				break;
+				break;
 
 			case 'd':
 				printf("Use daemon mode\n");
 				daem = 1;
- 				break;
+				break;
 
 			case 'h':
 				usage();
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
 	if (dfile)
 		parse_savedfile();
 
-	if (daem) {	
+	if (daem) {
 		pid_t pid, sid;
 		pid = fork();
 		if (pid > 0)
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 				parse_proc();
 				report_results();
 				free_list();
-				sleep(tt);	
+				sleep(tt);
 			}
 		}
 	}else{

@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors: 
+ * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wang <jing_j_wang@intel.com>
  *
@@ -16,7 +16,7 @@
  */
 
 
-#define _GNU_SOURCE 
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,7 +85,7 @@ void report_library(void)
 		item = g_list_next(item);
 		c = strchr(library->name, '\n');
 		if (c) *c = 0;
-		
+
 		library->cost = 1.0 * library->total_kb / library->count;
 	}
 
@@ -104,8 +104,7 @@ void report_library(void)
 			library->count,
 			library->total_kb / library->count,
 			library->total_kb);
-		}		
+		}
 	}
 
 }
-

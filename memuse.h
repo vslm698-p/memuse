@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors: 
+ * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wong <jing_j_wang@intel.com>
  *
