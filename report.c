@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors:
+ * Authors: 
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wong <jing_j_wang@intel.com>
  *
@@ -15,7 +15,8 @@
  * This file contains the reporting routines
  */
 
-#define _GNU_SOURCE
+
+#define _GNU_SOURCE 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +30,7 @@
 
 #include "memuse.h"
 
-static int comparef(gconstpointer a, gconstpointer b)
+static int comparef (gconstpointer a, gconstpointer b)
 {
 	struct program *A = (struct program *)a;
 	struct program *B = (struct program *)b;
@@ -40,17 +41,17 @@ static int comparef(gconstpointer a, gconstpointer b)
 struct program *find_program(char *name)
 {
 	GList *item;
-	struct program *program;
+	struct program *program;	
 
 	item = g_list_first(programs_d);
 	while (item) {
-		program = item->data;
-		if (strncmp(program->name, name, strlen(name)) == 0)
+		program =  item->data;
+		if (strncmp(program->name,name,strlen(name))==0)
 			break;
-		item = g_list_next(item);
+		item = g_list_next(item);	
 	}
 	if (!item)
-		program = NULL;
+		program=NULL;
 	return program;
 }
 
@@ -58,52 +59,55 @@ void report_results(void)
 {
 	GList *item;
 	uint64_t total = 0;
-	int count = 0;
+	int count=0;
+	char buf[4096];
 
 	struct program *program;
 
-	programs = g_list_sort(programs, comparef);
-	item = g_list_first(programs);
-	while (item) {
-		char buf[256];
-		struct program *program_d = NULL;
-		if (num != 0 && count >= num)
-			break;
-		program = item->data;
-		if (dfile)
-			program_d = find_program(program->name);
-		total += program->kb;
-		if (program_d)
-			sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"), program->kb,
-				program->kb - program_d->kb, program->name);
-		else
-			sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
-				program->name);
+	if (daem == 0){
+		programs = g_list_sort(programs, comparef);
 
-		if (daem == 0)
+		item = g_list_first(programs);
+		while (item) {
+			if ( num!=0 && count>=num)
+				break;
+			program = item->data;
+			total += program->kb;
+			struct program *program_d=NULL;
+			if (dfile)
+				program_d=find_program(program->name);
+
+			if (program_d)
+				sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"), program->kb,program->kb - program_d->kb,program->name);
+			else
+				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb, program->name);
 			printf("%s", buf);
-
-		if (ofile) {
-			sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
-				program->name);
-			fputs(buf, ofile);
+			if (ofile){
+				sprintf(buf,_("%8lluKb\t\t%s \n"), program->kb, program->name);
+				fputs(buf,ofile);
+			}
+			count++;
+			item = g_list_next(item);
 		}
-		count++;
-		item = g_list_next(item);
-	}
-
-	uint64_t prv_size = get_pvr_total() / 1024;
-
-	if (daem == 0) {
 		printf(_("%8lluKb\t\tsystem total\n"), total);
 		report_library();
-	} else {
+	}else {
+		item = g_list_first(programs);
+		while (item) {
+			program = item->data;
+			total += program->kb;
+			item = g_list_next(item);
+		}
+	
+		uint64_t prv_size = get_pvr_total() / 1024;
+
 		if (sfile) {
-			char buf[256];
 			fseek(sfile, 0, SEEK_SET);
-			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size);
+			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size); 
 			fputs(buf, sfile);
+			fflush(sfile);
 		}
 	}
 
 }
+

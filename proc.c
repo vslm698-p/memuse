@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors:
+ * Authors: 
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wang <jing.j.wang@intel.com>
  *
@@ -15,7 +15,8 @@
  * This file contains the /proc parsing routines
  */
 
-#define _GNU_SOURCE
+
+#define _GNU_SOURCE 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,70 +40,75 @@ static void parse_process(int pid)
 	char filename[PATH_MAX];
 	char cmdfile[PATH_MAX];
 	char program_name[PATH_MAX];
-	char line[PATH_MAX];
+
+	char line[4096];
+	char lib[4096];
 	struct program *program;
 	uint64_t pss = 0;
 	uint64_t this_pss = 0;
-	char lib[4096];
-
+	
 	memset(program_name, 0, sizeof(program_name));
-	sprintf(cmdfile, "/proc/%i/cmdline", pid);
-	cmd = fopen(cmdfile, "r");
+	sprintf(cmdfile,"/proc/%i/cmdline",pid);
+	cmd = fopen(cmdfile, "r");	
 	if (!cmd)
 		return;
 
-	len = fread(program_name, 1, sizeof(program_name), cmd);
-	if (len <= 0) {
+	len=fread(program_name,1,sizeof(program_name),cmd);	
+	if (len <= 0){
 		fclose(cmd);
 		return;
 	}
 
-	int i = 0;
-	while (i++ < len) {
-		if (program_name[i] == 0)
-			program_name[i] = 32;
+	int i=0;
+	while (i++<len){
+		if (program_name[i]==0)
+			program_name[i]=32;	
 	}
-	program_name[len] = '\0';
-
+	program_name[len]='\0';
+		
 	program = malloc(sizeof(struct program));
 	assert(program != NULL);
 	program->name = strdup(program_name);
-	programs = g_list_append(programs, program);
-
+	programs = g_list_append(programs, program);	
+	
 	sprintf(filename, "/proc/%i/smaps", pid);
 	file = fopen(filename, "r");
-	if (!file) {
+	if (!file){
 		fclose(cmd);
 		return;
 	}
 	while (!feof(file)) {
 		char *c;
 		memset(line, 0, sizeof(line));
-		if (!fgets(line, sizeof(line) - 1, file))
+		if (!fgets(line, sizeof(line)-1, file))
 			break;
 
-		if (line[0] < 'A' || line[0] > 'Z') {
+		if (line[0] < 'A'|| line[0] > 'Z') {
 			c = strchr(line, '/');
 			if (c)
-				strcpy(lib, c);
+				strcpy(lib,c);
 		}
 
 		if (strstr(line, "Pss:")) {
+			uint64_t val = 0;
 			c = line;
 			c += 5;
-			pss += strtoull(c, NULL, 10);
-			this_pss += strtoull(c, NULL, 10);
+			val = strtoull(c, NULL, 10);
+			pss += val;		
+			this_pss += val;
 		}
 
-		if (strstr(line, "Swap:")) {
-			add_library(lib, this_pss, pid);
-			this_pss = 0;
-			lib[0] = 0;
+		if (daem == 0){
+			if (strstr(line, "Swap:")) {
+				add_library(lib, this_pss, pid);
+				this_pss = 0;
+				lib[0] = 0;
+                	}
 		}
-
+		
 	}
 	program->kb = pss;
-	fclose(file);
+	fclose(file);		
 	fclose(cmd);
 }
 
@@ -116,12 +122,11 @@ uint64_t get_pvr_total(void)
 	file = fopen(fname, "r");
 	if (!file)
 		return 0;
-	char *keystr =
-	    "The Current Water Mark for memory allocated from system RAM : ";
+	char *keystr = "The Current Water Mark for memory allocated from system RAM : ";
 	while (!feof(file) && (i < 20)) {
 		char *c;
 		memset(line, 0, sizeof(line));
-		if (!fgets(line, sizeof(line) - 1, file))
+		if (!fgets(line, sizeof(line) -1, file))
 			break;
 		if (strstr(line, keystr)) {
 			c = line;
@@ -130,7 +135,7 @@ uint64_t get_pvr_total(void)
 			break;
 		}
 		i++;
-	}
+	}	
 	return pvrsize;
 }
 
@@ -153,7 +158,7 @@ void parse_proc(void)
 		if (tmp > 0)
 			parse_process(tmp);
 	} while (1);
-
+	
 	closedir(dir);
 }
 
@@ -163,30 +168,30 @@ void parse_savedfile(void)
 	char line[PATH_MAX];
 	struct program *program;
 	uint64_t pss = 0;
-
+	
 	memset(program_name, 0, sizeof(program_name));
-
+	
 	if (!dfile)
 		return;
 	while (!feof(dfile)) {
 		char *c;
 		memset(line, 0, sizeof(line));
-		if (!fgets(line, sizeof(line) - 1, dfile))
+		if (!fgets(line,sizeof(line)-1,dfile))
 			break;
-		c = strstr(line, "Kb");
+		c=strstr(line, "Kb");
 		if (!c)
 			continue;
-		*c = '\0';
-		pss = strtoull(line, NULL, 0);
-		c += 2;
-		while (*c == ' ' || *c == '\t')
+		*c='\0';
+		pss=strtoull(line,NULL,0);
+		c+=2;
+		while (*c==' ' || *c=='\t')
 			c++;
-		strcpy(program_name, c);
-		program_name[strlen(c) - 1] = '\0';
+		strcpy(program_name,c);
+		program_name[strlen(c)-1]='\0';
 		program = malloc(sizeof(struct program));
 		assert(program != NULL);
 		program->name = strdup(program_name);
-		program->kb = pss;
-		programs_d = g_list_append(programs_d, program);
+		program->kb=pss;
+		programs_d = g_list_append(programs_d, program);	
 	}
 }
