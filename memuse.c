@@ -71,7 +71,7 @@ void cleanup(void)
 		fclose(sfile);
 }
 
-void sig_handler (int signum)
+void sig_handler(int signum)
 {
 	sig_flag = 1;
 }
@@ -171,15 +171,15 @@ int main(int argc, char **argv)
 			if ((sid = setsid()) < 0)
 				exit(1);
 			struct sigaction sa;
-			sigemptyset (&sa.sa_mask);
+			sigemptyset(&sa.sa_mask);
 			sa.sa_flags = 0;
 
 			sa.sa_handler = sig_handler;
-			sigaction (SIGINT, &sa, 0);
-			sigaction (SIGTERM, &sa, 0);
+			sigaction(SIGINT, &sa, 0);
+			sigaction(SIGTERM, &sa, 0);
 
 			umask(0);
-			while (sig_flag==0) {
+			while (sig_flag == 0) {
 				parse_proc();
 				report_results();
 				free_list();

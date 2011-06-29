@@ -15,7 +15,6 @@
  * This file contains the reporting routines
  */
 
-
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -30,7 +29,7 @@
 
 #include "memuse.h"
 
-static int comparef (gconstpointer a, gconstpointer b)
+static int comparef(gconstpointer a, gconstpointer b)
 {
 	struct program *A = (struct program *)a;
 	struct program *B = (struct program *)b;
@@ -45,13 +44,13 @@ struct program *find_program(char *name)
 
 	item = g_list_first(programs_d);
 	while (item) {
-		program =  item->data;
-		if (strncmp(program->name,name,strlen(name))==0)
+		program = item->data;
+		if (strncmp(program->name, name, strlen(name)) == 0)
 			break;
 		item = g_list_next(item);
 	}
 	if (!item)
-		program=NULL;
+		program = NULL;
 	return program;
 }
 
@@ -59,39 +58,44 @@ void report_results(void)
 {
 	GList *item;
 	uint64_t total = 0;
-	int count=0;
+	int count = 0;
 	char buf[4096];
 
 	struct program *program;
 
-	if (daem == 0){
+	if (daem == 0) {
 		programs = g_list_sort(programs, comparef);
 
 		item = g_list_first(programs);
 		while (item) {
-			if ( num!=0 && count>=num)
+			if (num != 0 && count >= num)
 				break;
 			program = item->data;
 			total += program->kb;
-			struct program *program_d=NULL;
+			struct program *program_d = NULL;
 			if (dfile)
-				program_d=find_program(program->name);
+				program_d = find_program(program->name);
 
 			if (program_d)
-				sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"), program->kb,program->kb - program_d->kb,program->name);
+				sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"),
+					program->kb,
+					program->kb - program_d->kb,
+					program->name);
 			else
-				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb, program->name);
+				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
+					program->name);
 			printf("%s", buf);
-			if (ofile){
-				sprintf(buf,_("%8lluKb\t\t%s \n"), program->kb, program->name);
-				fputs(buf,ofile);
+			if (ofile) {
+				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
+					program->name);
+				fputs(buf, ofile);
 			}
 			count++;
 			item = g_list_next(item);
 		}
 		printf(_("%8lluKb\t\tsystem total\n"), total);
 		report_library();
-	}else {
+	} else {
 		item = g_list_first(programs);
 		while (item) {
 			program = item->data;
