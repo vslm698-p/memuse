@@ -39,8 +39,8 @@ FILE *dfile = NULL;
 FILE *ofile = NULL;
 FILE *sfile = NULL;
 int daem = 0;
-int tt = 0;
 int num = 0;
+int sig_flag = 0;
 
 void free_node(gpointer data, gpointer user_data)
 {
@@ -61,6 +61,7 @@ void free_list(void)
 
 void cleanup(void)
 {
+	printf("memuse clean up %d\n", sig_flag);
 	free_list();
 	if (dfile)
 		fclose(dfile);
@@ -68,6 +69,11 @@ void cleanup(void)
 		fclose(ofile);
 	if (sfile)
 		fclose(sfile);
+}
+
+void sig_handler (int signum)
+{
+	sig_flag = 1;
 }
 
 void usage()
@@ -85,6 +91,7 @@ void usage()
 
 int main(int argc, char **argv)
 {
+	int tt = 0;
 	setlocale(LC_ALL, "");
 	bindtextdomain("memuse", "/usr/share/locale");
 	textdomain("memuse");
@@ -152,7 +159,6 @@ int main(int argc, char **argv)
 			;
 		}
 	}
-
 	if (dfile)
 		parse_savedfile();
 
@@ -164,8 +170,16 @@ int main(int argc, char **argv)
 		else {
 			if ((sid = setsid()) < 0)
 				exit(1);
+			struct sigaction sa;
+			sigemptyset (&sa.sa_mask);
+			sa.sa_flags = 0;
+
+			sa.sa_handler = sig_handler;
+			sigaction (SIGINT, &sa, 0);
+			sigaction (SIGTERM, &sa, 0);
+
 			umask(0);
-			while (1) {
+			while (sig_flag==0) {
 				parse_proc();
 				report_results();
 				free_list();
