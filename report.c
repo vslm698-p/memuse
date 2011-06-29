@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2008 Intel Corporation
  *
- * Authors: 
+ * Authors:
  *	Arjan van de Ven <arjan@linux.intel.com>
  *	Jing Wong <jing_j_wang@intel.com>
  *
@@ -16,7 +16,7 @@
  */
 
 
-#define _GNU_SOURCE 
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,14 +41,14 @@ static int comparef (gconstpointer a, gconstpointer b)
 struct program *find_program(char *name)
 {
 	GList *item;
-	struct program *program;	
+	struct program *program;
 
 	item = g_list_first(programs_d);
 	while (item) {
 		program =  item->data;
 		if (strncmp(program->name,name,strlen(name))==0)
 			break;
-		item = g_list_next(item);	
+		item = g_list_next(item);
 	}
 	if (!item)
 		program=NULL;
@@ -98,16 +98,15 @@ void report_results(void)
 			total += program->kb;
 			item = g_list_next(item);
 		}
-	
+
 		uint64_t prv_size = get_pvr_total() / 1024;
 
 		if (sfile) {
 			fseek(sfile, 0, SEEK_SET);
-			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size); 
+			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size);
 			fputs(buf, sfile);
 			fflush(sfile);
 		}
 	}
 
 }
-
