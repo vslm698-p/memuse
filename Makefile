@@ -1,5 +1,5 @@
 
-VERSION = 0.22
+VERSION = 0.23
 
 CFLAGS += -O2 -g -Wall -W -D_FORTIFY_SOURCE=2 -fstack-protector \
 	`pkg-config --cflags glib-2.0` \
