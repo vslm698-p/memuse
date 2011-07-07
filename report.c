@@ -59,7 +59,6 @@ void report_results(void)
 	GList *item;
 	uint64_t total = 0;
 	int count = 0;
-	char buf[4096];
 
 	struct program *program;
 
@@ -77,18 +76,17 @@ void report_results(void)
 				program_d = find_program(program->name);
 
 			if (program_d)
-				sprintf(buf, _("%8lluKb(%+6lldK)\t%s \n"),
+				printf(_("%8lluKb(%+6lldK)\t%s \n"),
 					program->kb,
 					program->kb - program_d->kb,
 					program->name);
 			else
-				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
+				printf(_("%8lluKb\t\t%s \n"), program->kb,
 					program->name);
-			printf("%s", buf);
+
 			if (ofile) {
-				sprintf(buf, _("%8lluKb\t\t%s \n"), program->kb,
+				fprintf(ofile, _("%8lluKb\t\t%s \n"), program->kb,
 					program->name);
-				fputs(buf, ofile);
 			}
 			count++;
 			item = g_list_next(item);
@@ -107,8 +105,7 @@ void report_results(void)
 
 		if (sfile) {
 			fseek(sfile, 0, SEEK_SET);
-			sprintf(buf, _("%lluKb %lluKb\n"), total, prv_size);
-			fputs(buf, sfile);
+			fprintf(sfile, _("%lluKb %lluKb\n"), total, prv_size);
 			fflush(sfile);
 		}
 	}
