@@ -7,10 +7,16 @@ CFLAGS += -O2 -g -Wall -W -D_FORTIFY_SOURCE=2 -fstack-protector \
 
 OBJS := memuse.o proc.o report.o library.o
 
+CC ?= gcc
+
 all: memuse
 
 memuse: $(OBJS) memuse.h
-	gcc -o memuse $(OBJS) $(CFLAGS)
+	@$(CC) -o memuse $(OBJS) $(CFLAGS)
+
+%.o: %.c Makefile
+	@[ -x /usr/bin/cppcheck ] && /usr/bin/cppcheck -q $< || :
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 install: memuse
 	install -d $(DESTDIR)/usr/bin
